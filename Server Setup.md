@@ -28,12 +28,19 @@ Insert the SD card into the storage slot on the OrangePi and power the device.
 
 ### Connecting To the Device
 #### SSH
-The default hostname for the OS is 
+
 #### Peripherals
 
 #### 
 
 ## Configure HostAPD
+HostAPD is the service that will create our server's wireless access point. We want to do a few things here. First, set the wifi dongle as our access point interface, second, pick an SSID the access point will use and finally, set the service to start after the interface comes online on boot.
+
+In /etc/hostapd/hostapd.conf:
+
+- Change interface to wlan1
+- Change SSID config line to you preferred wifi network name
+        
 
 ## Configure Network Manager
 
