@@ -30,8 +30,7 @@ Insert the SD card into the storage slot on the OrangePi and power the device.
 #### SSH
 
 #### Peripherals
-
-#### 
+Simply start the device and it will boot to GUI and take you through inital setup, including hostname and password.
 
 ## Configure HostAPD
 HostAPD is the service that will create our server's wireless access point. We want to do a few things here. First, set the wifi dongle as our access point interface, second, pick an SSID the access point will use and finally, set the service to start after the interface comes online on boot.
@@ -62,10 +61,39 @@ Now using your preferred file editor add the following to the ovveride.conf:
 Now the service wont start until after the interface becomes available.
 
 ## Configure Network Manager
+We now want to disable management of the wlan1 interface by the Network Manager service.
+
+in /etc/NetworkManager/conf.d/unmanaged.conf:
+
+    [keyfile]
+    unmanaged-devices=interface-name:wlan1;interface-name:end1
+
+Notice that this set two interfaces as unmanaged, both wlan1 and end0. end0 is the ethernet interface would be the interface used if you have a seperate router or access point.
 
 ## Configure Systemd-Networkd
+Next we want to set specific IP addresses on boot. Once again this will include IPs for wlan1 and end0:
+
+create file /etc/systemd/network/wlan1.network
+
+    [Match]
+    Name=wlan1
+    [Network]
+    Address=192.168.4.1/24
+
+Then create file /etc/systemd/network/end0.network
+
+    [Match]
+    Name=end0
+    [Network]
+    Address=192.168.5.1/24
+
+Then restart systemd-networkd
+
+    sudo systemctl restart systemd-networkd
 
 ## Configure DNSMasq
+
+
 
 ## Configure Nginx
 
