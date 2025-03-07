@@ -93,7 +93,23 @@ Then restart systemd-networkd
 
 ## Configure DNSMasq
 
+DNSmasq will be the DNS and DHCP server for the 192.168.4.0/24 subnet. We want it to resolve all domain requests to itself because that tells connected devices that there is a captive portal they are intended to visit.
 
+in /etc/dnsmasq.conf add the following lines at the top of the file above the existing configuration:
+
+    interface=wlan1
+    dhcp-range=192.168.4.10,192.168.4.240,8h
+    dhcp-option=3,192.168.4.1
+    dhcp-option=6,192.168.4.1
+    address=/#/192.168.4.1
+
+This makes dnsmasq act as the DNS and DHCP server for the 192.168.4.0/24 subnet, and resolves all domain requests to itself. You can override specific domains if desired
+
+finally disable systemd-resolved so that port 53 is available
+
+    sudo systemctl disable systemd-resolved --now
+
+Then enable and start dnsmasq
 
 ## Configure Nginx
 
