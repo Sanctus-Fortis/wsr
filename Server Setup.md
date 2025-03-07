@@ -141,6 +141,8 @@ Finally, enable and start nginx.
 
 ## Starting The Server
 
+The first thing we'll need for the server is the actual server content which can be acquired from the oc4d github. However this will not include the modules which contain the actual educational content. 
+
 ## Copying The Modules
 
 ## Copying The Database
