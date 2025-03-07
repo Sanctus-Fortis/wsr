@@ -40,7 +40,26 @@ In /etc/hostapd/hostapd.conf:
 
 - Change interface to wlan1
 - Change SSID config line to you preferred wifi network name
-        
+
+now move to /etc/systemd/system/hostapd.service.d/override.conf
+
+If the hostapd.service.d directory does not exist, create it:
+
+    cd /etc/systemd/system
+    sudo mkdir hostapd.service.d
+
+Then enter the directory and create the override.conf file:
+
+    cd hostapd.service.d
+    touch override.conf
+
+Now using your preferred file editor add the following to the ovveride.conf:
+
+    [Unit]
+    BindsTo=sys-subsystem-net-devices-wlan1.device
+    After=sys-subsystem-net-devices-wlan1.device
+
+Now the service wont start until after the interface becomes available.
 
 ## Configure Network Manager
 
