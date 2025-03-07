@@ -113,6 +113,32 @@ Then enable and start dnsmasq
 
 ## Configure Nginx
 
+In /etc/nginx/nginx.conf we want to make the following changes:
+
+below the server_name line for the http server listening on port 80:
+
+    return 302 http://oc4d.cdn
+
+Then delete the server_name line and change the listen line to:
+
+    listen              80 default_server;
+
+Now add another server configuration above the others:
+
+    server {
+        listen 80;
+        server_name oc4d.cdn;
+        location / {
+            proxy_pass http://localhost:3000/;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+    }
+
+Finally, enable and start nginx.
+
 ## Starting The Server
 
 ## Copying The Modules
