@@ -1,0 +1,2 @@
+# wsr
+Worlds Smallest Repo
