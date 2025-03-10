@@ -4,7 +4,7 @@ Behold the comprehensiveness of this documentation for rendering of even the mos
 ## Getting Started
 If you are setting up the server using peripherals (such as mouse and keyboard) you will want a USB hub that you can use to connect multiple USB devices to the single port on the device.
 
-Your will also want a microHDMI to HDMI cable or converter so that you can connect to a monitor.
+You will also want a microHDMI to HDMI cable or converter so that you can connect to a monitor.
 
 If you are planning to use SSH then you will only need the wifi dongle which can be plugged in directly to the device via the single usb port.
 
@@ -142,7 +142,7 @@ Finally, enable and start nginx.
 
 ## Starting The Server
 
-The first thing we'll need for the server is the actual server content which can be acquired from the oc4d github. However this will not include the modules which contain the actual educational content. We've been copying those from an already active server.
+The first thing we'll need for the server is the actual server content which can be acquired from the oc4d github.
 
 First, copy the oc4d github repo to the home folder for your user on the Orange Pi.
 
@@ -168,9 +168,69 @@ over, then the database with all the paths.
 
 ## Copying The Modules
 
+To get the modules from an already running server do the following:
+
+- Insert the Raspberry Pi SD Card into the Orange Pi via a USB adapter (NOT the SD card slot for the OS).
+- Open the file explorer app. Click on the “ROOTFS” drive that appears - this is the Raspberry Pi filesystem.
+- Navigate to this drive’s /home/pi/oc4d/workspaces/website/public folder. 
+- Copy the public folder to the
+Orange Pi’s equivalent public folder in the oc4d website workspace. When prompted, select “replace
+content” and apply to any subsequent operations. NOTE: This will delete any current content (basically
+nothing, because this is a fresh start)
+
 ## Copying The Database
 
+First host the running CDN server and connect to it with the one being built:
+
+    ssh pi@cdn.local
+
+The password is rachel.
+
+NOTE: You may need to turn hostapd off and change the ip address so there are no conflicts and you can
+connect. These commands will do this, and will not persist on reboot.
+
+    sudo systemctl stop hostapd
+    sudo ip address delete 192.168.4.1/24 dev wlan1
+
+Once you are finished copying the database ou can reboot to remove these changes.
+
+In your SSH session:
+
+Export the database:
+
+    sudo docker exec oc4d_db pg_dump -Ft -U postgrws oc4d > oc4dcopy.dump
+
+ls to confirm the file exists.
+
+Now that the file is created you can leave the SSH session. We'll SCP the file onto the dev server using:
+
+    scp pi@cdn.local:/home/pi/oc4dclone.dump .
+
+ls to confirm the file was copied over.
+
+Now we'll copy the file to the docker container and overwrite the previous contents:
+
+    sudo docker cp oc4dcopy.dump oc4d_db:/oc4dcopy.dump
+    sudo docker exec oc4d_db pg_restore --dmname=oc4d oc4dcopy.dump --clean
+
+You can confirm it worked by printing the contents of the database:
+
+    sudo docker exec -it od4c_db /bin/bash
+    psql oc4d postgres
+    SELECT * FROM "Module";
+
 ## Serving The Content
+
+Use th following command to create the production build:
+
+    sudo npm run build
+
+Copy the oc4d.service in raspberry-pi-configs to the matching system location and enable and start it.
+
+From raspberry-pi-configs/systemd/system
+
+    cp oc4d.service /etc/systemd/system
+    sudo systemctl enable oc4d.server --now
 
 ## Kolibri
 
