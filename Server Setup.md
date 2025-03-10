@@ -52,7 +52,7 @@ Then enter the directory and create the override.conf file:
     cd hostapd.service.d
     touch override.conf
 
-Now using your preferred file editor add the following to the ovveride.conf:
+Now using your preferred file editor add the following to the override.conf:
 
     [Unit]
     BindsTo=sys-subsystem-net-devices-wlan1.device
