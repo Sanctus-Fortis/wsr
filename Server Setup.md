@@ -138,10 +138,33 @@ Now add another server configuration above the others:
     }
 
 Finally, enable and start nginx.
+    sudo systemctl enable nginx --now
 
 ## Starting The Server
 
-The first thing we'll need for the server is the actual server content which can be acquired from the oc4d github. However this will not include the modules which contain the actual educational content. 
+The first thing we'll need for the server is the actual server content which can be acquired from the oc4d github. However this will not include the modules which contain the actual educational content. We've been copying those from an already active server.
+
+First, copy the oc4d github repo to the home folder for your user on the Orange Pi.
+
+Repo is at: https://github.com/ComDevNet/oc4d/tree/main
+
+Then in the Orange Pi terminal:
+
+    cd workspaces
+    run npm install
+
+This may take some time. Once it is finished we'll start the Docker service:
+
+    cd website
+    sudo systemctl enable docker.service --now
+    sudo docker-compose up -d
+    npm run db:setup
+
+At this point the database links to a variety of content hosted in AWS. However, at the time of writing,
+this cannot be automatically downloaded and cached.
+We used the following steps to clone the content from an existing Raspberry Pi server over to the
+Orange Pi for the sake of demonstrating its ability to serve content. First the modules must be copied
+over, then the database with all the paths.
 
 ## Copying The Modules
 
